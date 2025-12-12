@@ -108,8 +108,30 @@ class Tempo:
 
         return balances
 
-    @retry_async(default_value=False)
     async def send_random_token(self) -> bool:
+        num_transactions = random.randint(
+            self.config.TOKEN_SENDER.NUMBER_OF_TRANSACTIONS_TO_SEND[0],
+            self.config.TOKEN_SENDER.NUMBER_OF_TRANSACTIONS_TO_SEND[1],
+        )
+        logger.info(f"{self.account_index} | Will send {num_transactions} token transactions")
+        
+        for tx_num in range(1, num_transactions + 1):
+            success = await self._send_single_token(tx_num, num_transactions)
+            if not success:
+                return False
+            
+            if tx_num < num_transactions:
+                pause = random.randint(
+                    self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[0],
+                    self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
+                )
+                logger.info(f"{self.account_index} | Pausing {pause}s before next transaction")
+                await asyncio.sleep(pause)
+        
+        return True
+
+    @retry_async(default_value=False)
+    async def _send_single_token(self, tx_num: int, total_txs: int) -> bool:
         try:
             token = random.choice(TEMPO_TOKENS)
             
@@ -149,11 +171,11 @@ class Tempo:
                 
                 target_wallet = random.choice(available_wallets)
                 to_address = target_wallet.address
-                logger.info(f"{self.account_index} | Sending to own wallet #{target_wallet.account_index}")
+                logger.info(f"{self.account_index} | [{tx_num}/{total_txs}] Sending to own wallet #{target_wallet.account_index}")
             else:
                 random_bytes = secrets.token_bytes(20)
                 to_address = self.web3.web3.to_checksum_address("0x" + random_bytes.hex())
-                logger.info(f"{self.account_index} | Sending to random address: {to_address}")
+                logger.info(f"{self.account_index} | [{tx_num}/{total_txs}] Sending to random address: {to_address}")
             
             token_contract = self.web3.web3.eth.contract(
                 address=self.web3.web3.to_checksum_address(token["address"]),
@@ -161,7 +183,7 @@ class Tempo:
             )
             
             formatted_amount = amount_to_send // token_unit
-            logger.info(f"{self.account_index} | Sending {formatted_amount} {token['symbol']} to {to_address}")
+            logger.info(f"{self.account_index} | [{tx_num}/{total_txs}] Sending {formatted_amount} {token['symbol']} to {to_address}")
             
             tx = await token_contract.functions.transfer(
                 self.web3.web3.to_checksum_address(to_address),
@@ -182,7 +204,7 @@ class Tempo:
             if rcpt['status'] != 1:
                 raise Exception('Token transfer transaction failed')
             
-            logger.success(f"{self.account_index} | Token sent! TX: {EXPLORER_URL_TEMPO}{rcpt['transactionHash'].hex()}")
+            logger.success(f"{self.account_index} | [{tx_num}/{total_txs}] Token sent! TX: {EXPLORER_URL_TEMPO}{rcpt['transactionHash'].hex()}")
             return True
             
         except Exception as e:
@@ -190,6 +212,6 @@ class Tempo:
                 self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[0],
                 self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[1],
             )
-            logger.error(f"{self.account_index} | Send token error: {e}")
+            logger.error(f"{self.account_index} | [{tx_num}/{total_txs}] Send token error: {e}")
             await asyncio.sleep(random_pause)
             raise

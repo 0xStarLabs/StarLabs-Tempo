@@ -53,7 +53,7 @@ class WalletInfo:
 class TokenSenderConfig:
     SEND_TOKENS_TO_MY_WALLETS: bool
     PERCENT_OF_BALANCE_TO_SEND: Tuple[float, float]
-
+    NUMBER_OF_TRANSACTIONS_TO_SEND: Tuple[int, int]
 @dataclass
 class WalletsConfig:
     wallets: List[WalletInfo] = field(default_factory=list)
@@ -131,6 +131,7 @@ class Config:
             TOKEN_SENDER=TokenSenderConfig(
                 SEND_TOKENS_TO_MY_WALLETS=data["TOKEN_SENDER"]["SEND_TOKENS_TO_MY_WALLETS"],
                 PERCENT_OF_BALANCE_TO_SEND=tuple(data["TOKEN_SENDER"]["PERCENT_OF_BALANCE_TO_SEND"]),
+                NUMBER_OF_TRANSACTIONS_TO_SEND=tuple(data["TOKEN_SENDER"]["NUMBER_OF_TRANSACTIONS_TO_SEND"]),
             ),
         )
 

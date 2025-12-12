@@ -64,6 +64,10 @@ TOKEN_SENDER:
     # BY DEFAULT: [5, 10] - send 5-10% of balance
     PERCENT_OF_BALANCE_TO_SEND: [5, 10]
 
+    # Number of transactions to send.
+    # BY DEFAULT: [1, 10] - send 1-10 transactions
+    NUMBER_OF_TRANSACTIONS_TO_SEND: [1, 10]
+
 
 RPCS:
     TEMPO: ["https://rpc.testnet.tempo.xyz"]
