@@ -1209,7 +1209,8 @@ function renderConfig(config) {
             } else if (key === 'TOKEN_SENDER') {
                 createCard(cardsContainer, 'Token Sender Settings', 'paper-plane', [
                     { key: 'SEND_TOKENS_TO_MY_WALLETS', value: config[key]['SEND_TOKENS_TO_MY_WALLETS'] },
-                    { key: 'PERCENT_OF_BALANCE_TO_SEND', value: config[key]['PERCENT_OF_BALANCE_TO_SEND'] }
+                    { key: 'PERCENT_OF_BALANCE_TO_SEND', value: config[key]['PERCENT_OF_BALANCE_TO_SEND'] },
+                    { key: 'NUMBER_OF_TRANSACTIONS_TO_SEND', value: config[key]['NUMBER_OF_TRANSACTIONS_TO_SEND'] }
                 ], key);
             } else if (key === 'RPCS') {
                 createCard(cardsContainer, 'RPC Settings', 'network-wired', 
