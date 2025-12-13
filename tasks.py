@@ -1,8 +1,10 @@
-TASKS = ["FAUCET", "TOKEN_SENDER"]
+TASKS = ["FAUCET"]
 
 FAUCET = ["faucet"]
 TOKEN_SENDER = ["token_sender"]
-
+ONCHAINGM_GM = ["onchaingm_gm"]
+ONCHAINGM_DEPLOY = ["onchaingm_deploy"]
+INFINITYNAME_DOMAIN = ["infinityname_domain"]
 """
 EN:
 You can create your own task with the modules you need 

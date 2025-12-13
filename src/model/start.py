@@ -4,6 +4,7 @@ import primp
 import random
 import asyncio
 
+from src.model.dapps import onchaingm_gm, onchaingm_deploy, infinityname_mint
 from src.model.tempo.instance import Tempo
 from src.model.help.stats import WalletStats
 from src.model.onchain.web3_custom import Web3Custom
@@ -206,6 +207,15 @@ class Start:
 
         if task == "token_sender":
             return await self.tempo_instance.send_random_token()
+
+        if task == "onchaingm_gm":
+            return await onchaingm_gm(self.account_index, self.session, self.tempo_web3, self.config, self.wallet)
+
+        if task == "onchaingm_deploy":
+            return await onchaingm_deploy(self.account_index, self.session, self.tempo_web3, self.config, self.wallet)
+
+        if task == "infinityname_domain":
+            return await infinityname_mint(self.account_index, self.session, self.tempo_web3, self.config, self.wallet)
 
         logger.error(f"{self.account_index} | Task {task} not found")
         return False
